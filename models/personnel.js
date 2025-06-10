@@ -34,5 +34,6 @@ function validatePersonnel(personnel, errors) {
 const Personnel = mongoose.model('Personnel', schema);
 
 module.exports = {
-    Personnel
+    Personnel,
+    validatePersonnel
 }

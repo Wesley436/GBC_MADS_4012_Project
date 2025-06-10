@@ -11,6 +11,19 @@
 
     <main class="main-section">
         <section class="introduction">
+            <button onclick="location.href='/create-personnel'">Add New Personnel</button>
+            <div class="item-list">
+                <% personnels.forEach(function(personnel) { %>
+                    <div class="item-box" onclick="location.href='/edit-personnel/<%= personnel._id %>'">
+                        <p>Name: <%= personnel.name %></p>
+                        <p>Rank: <%= personnel.rank %></p>
+                        <p>Skills: <%= personnel.skills %></p>
+                        <form id="delete-item" method="POST" action="/delete-personnel/<%= personnel._id %>">
+                            <button id="delete_button" type="submit" class="media_button">Delete</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
         </section>
     </main>
 

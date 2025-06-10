@@ -21,7 +21,11 @@ app.get("/", async function(req,res) {
 
 app.get("/personnel", async function(req, res) {
     const personnels = await Personnel.find();
-    res.render("personnel.ejs", {personnels: "personnels"});
+    res.render("personnel.ejs", {personnels: personnels});
+});
+
+app.get("/create-personnel", function(req, res) {
+    return res.render("create_personnel.ejs", {errors: [], id: null, personnel: {}, action_type: "create"});
 });
 
 app.post("/personnel", async function(req, res) {
@@ -40,7 +44,23 @@ app.post("/personnel", async function(req, res) {
     res.redirect("/personnel");
 });
 
-app.put("/personnel/:id", async function(req, res) {
+app.get("/edit-personnel/:id", async function(req, res) {
+    const id = req.params.id;
+
+    if (!id || id.length !== 24) {
+        res.redirect("/");
+        return;
+    }
+
+    const currentPersonnel = await Personnel.findById(req.params.id);
+    if (!currentPersonnel) {
+        res.redirect("/create-personnel");
+    }
+
+    return res.render("create_personnel.ejs", {errors: [], id: id, personnel: currentPersonnel, action_type: "edit"});
+});
+
+app.post("/personnel/:id", async function(req, res) {
     const id = req.params.id;
 
     if (!id || id.length !== 24) {
@@ -54,7 +74,7 @@ app.put("/personnel/:id", async function(req, res) {
     personnel.validatePersonnel(currentPersonnel, errors);
 
     if(errors.length > 0) {
-        return res.render("create_personnel.ejs", {errors, id: null, personnel: currentPersonnel, action_type: "edit"});
+        return res.render("create_personnel.ejs", {errors, id: id, personnel: currentPersonnel, action_type: "edit"});
     }
 
     await Personnel.findOneAndUpdate(
@@ -72,13 +92,22 @@ app.put("/personnel/:id", async function(req, res) {
     res.redirect("/personnel");
 });
 
-app.delete("/personnel/:id", async function(req, res) {
+app.post("/delete-personnel/:id", async function(req, res) {
+    const id = req.params.id;
     
+    if (!id || id.length !== 24) {
+        res.redirect("/");
+        return;
+    }
+
+    await Personnel.findOneAndDelete({_id: id});
+
+    res.redirect("/personnel");
 });
 
 app.get("/ship", async function(req, res) {
     const ships = await Ship.find();
-    res.render("ship.ejs", {ships: "ships"});
+    res.render("ship.ejs", {ships: ships});
 });
 
 app.post("/ship", async function(req, res) {
@@ -95,7 +124,7 @@ app.delete("/ship/:id", async function(req, res) {
 
 app.get("/mission", async function(req, res) {
     const missions = await Mission.find();
-    res.render("mission.ejs", {missions: "missions"});
+    res.render("mission.ejs", {missions: missions});
 });
 
 app.post("/mission", async function(req, res) {

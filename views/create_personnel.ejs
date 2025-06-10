@@ -4,17 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Personnel</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <%- include("partials/header.ejs") %>
 
     <main class="main-section">
         <section class="introduction">
+            <h2><%=action_type === "create" ? "Create" : "Edit"%> Personnel</h2>
         </section>
+        <form id="personnel_form" class="item_form" method="POST" action=<%=action_type === 'create' ? '/personnel' : '/personnel/' + id%>>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" class="text_input" value="<%=personnel.name%>"><br>
+
+            <label for="rank">Rank:</label><br>
+            <input type="text" id="rank" name="rank" class="text_input" value="<%=personnel.rank%>"></input><br>
+
+            <label for="skill">Skill:</label><br>
+            <input type="text" id="skill" name="skill "class="text_input">
+            <button id="add_list_item" type="button">Add</button><br>
+            <button id="clear_list_item" type="button">Clear</button><br>
+            <p id="list_items_adding"><%=personnel.skills%></p>
+            
+            <% if(errors){ %>
+                <% errors.forEach(function(error){ %>
+                    <div style="color:rgb(226, 0, 0)">
+                        <%= error %>
+                    </div>
+                <%}) %>
+            <%} %>
+            <input id="submit" type="submit" value=<%=action_type === "create" ? "Create" : "Edit"%> disabled>
+        </form>
     </main>
 
     <%- include("partials/footer.ejs") %>
-    <!-- <script src="../js/create_peronnel.js"></script> -->
+    <script src="../js/create_personnel.js"></script>
 </body>
 </html>
