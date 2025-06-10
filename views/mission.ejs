@@ -18,7 +18,18 @@
                     <div class="item-box" onclick="location.href='/edit-mission/<%= mission._id %>'">
                         <p>Destination planet: <%= mission.destination_planet %></p>
                         <p>Mission purpose: <%= mission.mission_purpose %></p>
-                        <p>Currently assigned to ship: </p>
+
+                        <div class="assignment-dropdown" onclick="stopPropagation(event)">
+                            <p>Currently assigned to ship: </p>
+                            <form id="assignment-form<%= mission._id %>" method="POST" action="/assign-mission-to-ship">
+                                <select class="assign-to-dropdown" onchange="selectShip('<%= mission._id %>', event)">
+                                    <option value="" class="assignment-option" <%= mission.assigned_ship_id === null ? 'selected' : ''%>>-- None --</option>
+                                    <% ships.forEach(function(ship) { %>
+                                        <option value="<%= ship._id %>" class="assignment-option" <%= mission.assigned_ship_id === ship._id.toString() ? 'selected' : ''%>><%= ship.name %></option>
+                                    <% }) %>
+                                </select>
+                            </form>
+                        </div>
 
                         <form id="delete-item" method="POST" action="/delete-mission/<%= mission._id %>">
                             <button type="submit" class="remove_button">Delete</button>
@@ -30,5 +41,7 @@
     </main>
 
     <%- include("partials/footer.ejs") %>
+    <script src="../js/utilities.js"></script>
+    <script src="../js/mission.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@
                     <div class="item-box" onclick="location.href='/edit-ship/<%= ship._id %>'">
                         <p>Name: <%= ship.name %></p>
                         <p>Registry Number: <%= ship.registry_number %></p>
-                        <p>Currently assigned to mission: </p>
+                        <p>Currently assigned to planet: <%= ship.destination_planet %></p>
 
                         <form id="delete-item" method="POST" action="/delete-ship/<%= ship._id %>">
                             <button type="submit" class="remove_button">Delete</button>
