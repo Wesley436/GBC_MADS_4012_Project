@@ -6,6 +6,8 @@ const ship = require("./models/ship_model.js");
 const Ship = ship.Ship;
 const personnel_ship_assignment = require("./models/personnel_ship_assignment_model.js");
 const PersonnelShipAssignment = personnel_ship_assignment.PersonnelShipAssignment;
+const ship_mission_assignment = require("./models/ship_mission_assignment_model.js");
+const ShipMissionAssignment = ship_mission_assignment.ShipMissionAssignment;
 const mission = require("./models/mission_model.js");
 const Mission = mission.Mission;
 
@@ -171,7 +173,7 @@ app.get("/ship", async function(req, res) {
     // }
 
     // res.render("ship.ejs", {ships: ships, missions: missions, errors: errors});
-    
+
     req.session.errors = [];
 });
 
@@ -262,19 +264,93 @@ app.post("/delete-ship/:id", async function(req, res) {
 
 app.get("/mission", async function(req, res) {
     const missions = await Mission.find();
-    res.render("mission.ejs", {missions: missions});
+    res.render("mission.ejs", {missions: missions, errors: req.session.errors});
+    req.session.errors = [];
+});
+
+app.get("/create-mission", function(req, res) {
+    return res.render("create_mission.ejs", {errors: [], id: null, mission: {}, action_type: "create"});
 });
 
 app.post("/mission", async function(req, res) {
+    const errors = [];
+    const newMission = req.body;
     
+    mission.validateMission(newMission, errors);
+
+    if(errors.length > 0) {
+        return res.render("create_mission.ejs", {errors, id: null, mission: newMission, action_type: "create"});
+    }
+
+    const newMissionModel = new Mission(newMission);
+    await newMissionModel.save();
+
+    res.redirect("/mission");
 });
 
-app.put("/mission/:id", async function(req, res) {
-    
+app.get("/edit-mission/:id", async function(req, res) {
+    const id = req.params.id;
+
+    if (!id || id.length !== 24) {
+        res.redirect("/");
+        return;
+    }
+
+    const currentMission = await Mission.findById(req.params.id);
+    if (!currentMission) {
+        res.redirect("/create-mission");
+    }
+
+    return res.render("create_mission.ejs", {errors: [], id: id, mission: currentMission, action_type: "edit"});
 });
 
-app.delete("/mission/:id", async function(req, res) {
+app.post("/mission/:id", async function(req, res) {
+    const id = req.params.id;
+
+    if (!id || id.length !== 24) {
+        res.redirect("/");
+        return;
+    }
     
+    const errors = [];
+    const currentMission = req.body;
+    
+    mission.validateMission(currentMission, errors);
+
+    if(errors.length > 0) {
+        return res.render("create_mission.ejs", {errors, id: id, mission: currentMission, action_type: "edit"});
+    }
+
+    await Mission.findOneAndUpdate(
+        {_id: id},
+        {
+            $set: {
+                destination_planet: currentMission.destination_planet,
+                mission_purpose: currentMission.mission_purpose
+            }
+        },
+        {new: true, runValidators: true}
+    );
+
+    res.redirect("/mission");
+});
+
+app.post("/delete-mission/:id", async function(req, res) {
+    const id = req.params.id;
+    
+    if (!id || id.length !== 24) {
+        res.redirect("/");
+        return;
+    }
+
+    const ship_assignments = await ShipMissionAssignment.find({mission_id: new ObjectId(id)});
+    
+    if (ship_assignments.length === 0) {
+        await Mission.findOneAndDelete({_id: id});
+    } else {
+        req.session.errors = ['Please unassign ship from mission'];
+    }
+    res.redirect("/mission");
 });
 
 const PORT = 3001;

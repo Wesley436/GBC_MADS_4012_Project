@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <main class="main-section">
+        <section class="introduction">
+            <button onclick="location.href='/create-mission'" class="add_button">Add New Mission</button>
+            <%- include("partials/error_messages.ejs", {errors}) %>
+            <div class="item-list">
+                <% missions.forEach(function(mission) { %>
+                    <div class="item-box" onclick="location.href='/edit-mission/<%= mission._id %>'">
+                        <p>Destination planet: <%= mission.destination_planet %></p>
+                        <p>Mission purpose: <%= mission.mission_purpose %></p>
+                        <p>Currently assigned to ship: </p>
+
+                        <form id="delete-item" method="POST" action="/delete-mission/<%= mission._id %>">
+                            <button type="submit" class="remove_button">Delete</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

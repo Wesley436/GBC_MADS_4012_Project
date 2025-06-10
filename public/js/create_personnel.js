@@ -10,10 +10,10 @@ const personnel_form = document.getElementById('personnel_form');
 const skills = [];
 
 /** 
- *  When the name input is updated, update the submit button to be disabled or not depending on whether the name is empty or not
+ *  When the name or rank input is updated, update the submit button to be disabled or not depending on whether the name is empty or not
  */
 function setSubmitButtonDisabled(event) {
-    submit.disabled = name.value.length === 0;
+    submit.disabled = name.value.length === 0 || rank.value.length === 0;
 }
 
 /** 
@@ -37,6 +37,7 @@ function clearSkill() {
 }
 
 name.addEventListener("change", setSubmitButtonDisabled);
+rank.addEventListener("change", setSubmitButtonDisabled);
 add_skill.addEventListener(`click`, addSkill);
 clear_skill.addEventListener(`click`, clearSkill);
 personnel_form.addEventListener('formdata', (e) => {

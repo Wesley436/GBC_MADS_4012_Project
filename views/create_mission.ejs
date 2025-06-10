@@ -11,10 +11,21 @@
 
     <main class="main-section">
         <section class="introduction">
+            <h2><%=action_type === "create" ? "Create" : "Edit"%> Mission</h2>
         </section>
+        <form id="mission_form" class="item_form" method="POST" action=<%=action_type === 'create' ? '/mission' : '/mission/' + id%>>
+            <label for="destination_planet">Destination planet:</label><br>
+            <input type="text" id="destination_planet" name="destination_planet" class="text_input" value="<%=mission.destination_planet%>"><br>
+
+            <label for="mission_purpose">Mission purpose:</label><br>
+            <input type="text" id="mission_purpose" name="mission_purpose" class="text_input" value="<%=mission.mission_purpose%>"></input><br>
+            
+            <%- include("partials/error_messages.ejs", {errors}) %>
+            <input id="submit" type="submit" value=<%=action_type === "create" ? "Create" : "Edit"%> disabled>
+        </form>
     </main>
 
     <%- include("partials/footer.ejs") %>
-    <!-- <script src="../js/create_peronnel.js"></script> -->
+    <script src="../js/create_mission.js"></script>
 </body>
 </html>
