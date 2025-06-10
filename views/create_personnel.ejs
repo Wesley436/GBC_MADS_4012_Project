@@ -26,13 +26,7 @@
             <button id="clear_list_item" type="button">Clear</button><br>
             <p id="list_items_adding"><%=personnel.skills%></p>
             
-            <% if(errors){ %>
-                <% errors.forEach(function(error){ %>
-                    <div style="color:rgb(226, 0, 0)">
-                        <%= error %>
-                    </div>
-                <%}) %>
-            <%} %>
+            <%- include("partials/error_messages.ejs", {errors}) %>
             <input id="submit" type="submit" value=<%=action_type === "create" ? "Create" : "Edit"%> disabled>
         </form>
     </main>

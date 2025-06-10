@@ -20,13 +20,7 @@
             <label for="registry_number">Registry Number:</label><br>
             <input type="text" id="registry_number" name="registry_number" class="text_input" value="<%=ship.registry_number%>"></input><br>
             
-            <% if(errors){ %>
-                <% errors.forEach(function(error){ %>
-                    <div style="color:rgb(226, 0, 0)">
-                        <%= error %>
-                    </div>
-                <%}) %>
-            <%} %>
+            <%- include("partials/error_messages.ejs", {errors}) %>
             <input id="submit" type="submit" value=<%=action_type === "create" ? "Create" : "Edit"%> disabled>
         </form>
     </main>

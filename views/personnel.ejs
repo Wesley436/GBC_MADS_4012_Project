@@ -12,6 +12,7 @@
     <main class="main-section">
         <section class="introduction">
             <button onclick="location.href='/create-personnel'" class="add_button">Add New Personnel</button>
+            <%- include("partials/error_messages.ejs", {errors}) %>
             <div class="item-list">
                 <% personnels.forEach(function(personnel) { %>
                     <div class="item-box" onclick="location.href='/edit-personnel/<%= personnel._id %>'">
@@ -19,16 +20,17 @@
                         <p>Rank: <%= personnel.rank %></p>
                         <p>Skills: <%= personnel.skills %></p>
                         <div class="assignment-dropdown" onclick="stopPropagation(event)">
-                            <p>Currently assigned to: </p>
+                            <p>Currently assigned to ship: </p>
                             <form id="assignment-form<%= personnel._id %>" method="POST" action="/assign-personnel-to-ship">
                                 <select class="assign-to-dropdown" onchange="selectShip('<%= personnel._id %>', event)">
-                                    <option value="" class="assignment-option">-- None --</option>
+                                    <option value="" class="assignment-option" <%= personnel.assigned_ship_id === null ? 'selected' : ''%>>-- None --</option>
                                     <% ships.forEach(function(ship) { %>
-                                        <option value="<%= ship._id %>" class="assignment-option" selected><%= ship.name %></option>
+                                        <option value="<%= ship._id %>" class="assignment-option" <%= personnel.assigned_ship_id === ship._id.toString() ? 'selected' : ''%>><%= ship.name %></option>
                                     <% }) %>
                                 </select>
                             </form>
                         </div>
+
                         <form id="delete-item" method="POST" action="/delete-personnel/<%= personnel._id %>">
                             <button type="submit" class="remove_button">Delete</button>
                         </form>

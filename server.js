@@ -1,4 +1,5 @@
 const express = require("express");
+const ObjectId = require('mongoose').Types.ObjectId;
 const personnel = require("./models/personnel_model.js");
 const Personnel = personnel.Personnel;
 const ship = require("./models/ship_model.js");
@@ -15,6 +16,13 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine","ejs");
 
+const session = require("express-session");
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+}));
+
 db.dbInit();
 
 app.get("/", async function(req,res) {
@@ -22,9 +30,21 @@ app.get("/", async function(req,res) {
 });
 
 app.get("/personnel", async function(req, res) {
-    const personnels = await Personnel.find();
     const ships = await Ship.find();
-    res.render("personnel.ejs", {personnels: personnels, ships: ships});
+    const personnels = await Personnel.aggregate()
+    .lookup({
+        from: 'personnelshipassignments',
+        localField: '_id',
+        foreignField: 'personnel_id',
+        as: 'assignments'
+    });
+
+    for (let personnel of personnels) {
+        personnel.assigned_ship_id = personnel.assignments[0]?.ship_id.toString();
+    }
+
+    res.render("personnel.ejs", {personnels: personnels, ships: ships, errors: req.session.errors});
+    req.session.errors = [];
 });
 
 app.get("/create-personnel", function(req, res) {
@@ -103,8 +123,13 @@ app.post("/delete-personnel/:id", async function(req, res) {
         return;
     }
 
-    await Personnel.findOneAndDelete({_id: id});
+    const assignments = await PersonnelShipAssignment.find({personnel_id: new ObjectId(id)});
 
+    if (assignments.length === 0) {
+        await Personnel.findOneAndDelete({_id: id});
+    } else {
+        req.session.errors = ['Please unassign personnel from ship'];
+    }
     res.redirect("/personnel");
 });
 
@@ -130,7 +155,24 @@ app.post("/assign-personnel-to-ship", async function(req, res) {
 
 app.get("/ship", async function(req, res) {
     const ships = await Ship.find();
-    res.render("ship.ejs", {ships: ships});
+    res.render("ship.ejs", {ships: ships, errors: req.session.errors});
+
+    // const missions = await Mission.find();
+    // const ships = await Ship.aggregate()
+    // .lookup({
+    //     from: 'shipmissionassignments',
+    //     localField: '_id',
+    //     foreignField: 'ship_id',
+    //     as: 'assignments'
+    // });
+
+    // for (let ship of ships) {
+    //     ship.assigned_mission_id = ship.assignments[0]?.mission_id.toString();
+    // }
+
+    // res.render("ship.ejs", {ships: ships, missions: missions, errors: errors});
+    
+    req.session.errors = [];
 });
 
 app.get("/create-ship", function(req, res) {
@@ -208,8 +250,13 @@ app.post("/delete-ship/:id", async function(req, res) {
         return;
     }
 
-    await Ship.findOneAndDelete({_id: id});
-
+    const personnel_assignments = await PersonnelShipAssignment.find({ship_id: new ObjectId(id)});
+    
+    if (personnel_assignments.length === 0) {
+        await Ship.findOneAndDelete({_id: id});
+    } else {
+        req.session.errors = ['Please unassign personnel from ship'];
+    }
     res.redirect("/ship");
 });
 
