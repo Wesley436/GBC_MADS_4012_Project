@@ -11,10 +11,37 @@
 
     <main class="main-section">
         <section class="introduction">
+            <h2>Welcome to United Earth Space Exploration Command</h2>
+            <h3>Operational Statiistics</h3>
+             <table>
+                <tr>
+                    <th></th>
+                    <th>Unassigned</th>
+                    <th>Assigned</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <td>Mission</td>
+                    <td><%=missions.length - shipMissionAssignment.length%></td>
+                    <td><%=shipMissionAssignment.length%></td>
+                    <td><%=missions.length%></td>
+                </tr>
+                <tr>
+                    <td>Ship</td>
+                    <td><%=ships.length - shipMissionAssignment.length%></td>
+                    <td><%=shipMissionAssignment.length%></td>
+                    <td><%=ships.length%></td>
+                </tr>
+                <tr>
+                    <td>Personnel</td>
+                    <td><%=personnels.length - personnelShipAssignment.length%></td>
+                    <td><%=personnelShipAssignment.length%></td>
+                    <td><%=personnels.length%></td>
+                </tr>
+                </table>
         </section>
     </main>
 
     <%- include("partials/footer.ejs") %>
-    <!-- <script src="../js/home.js"></script> -->
 </body>
 </html>

@@ -25,7 +25,9 @@
                                 <select class="assign-to-dropdown" onchange="selectShip('<%= mission._id %>', event)">
                                     <option value="" class="assignment-option" <%= mission.assigned_ship_id === null ? 'selected' : ''%>>-- None --</option>
                                     <% ships.forEach(function(ship) { %>
-                                        <option value="<%= ship._id %>" class="assignment-option" <%= mission.assigned_ship_id === ship._id.toString() ? 'selected' : ''%>><%= ship.name %></option>
+                                        <% if (!assigned_ship_ids.includes(ship._id.toString()) || mission.assigned_ship_id === ship._id.toString()) { %>
+                                            <option value="<%= ship._id %>" class="assignment-option" <%= mission.assigned_ship_id === ship._id.toString() ? 'selected' : ''%>><%= ship.name %></option>
+                                        <% } %>
                                     <% }) %>
                                 </select>
                             </form>

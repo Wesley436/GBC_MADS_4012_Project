@@ -28,7 +28,13 @@ app.use(session({
 db.dbInit();
 
 app.get("/", async function(req,res) {
-    res.render("home.ejs");
+    const personnels = await Personnel.find();
+    const ships = await Ship.find();
+    const missions = await Mission.find();
+    const personnelShipAssignment = await PersonnelShipAssignment.find();
+    const shipMissionAssignment = await ShipMissionAssignment.find();
+
+    res.render("home.ejs", {personnels, ships, missions, personnelShipAssignment, shipMissionAssignment});
 });
 
 app.get("/personnel", async function(req, res) {
@@ -45,7 +51,7 @@ app.get("/personnel", async function(req, res) {
         personnel.assigned_ship_id = personnel.assignments[0]?.ship_id.toString();
     }
 
-    res.render("personnel.ejs", {personnels: personnels, ships: ships, errors: req.session.errors});
+    res.render("personnel.ejs", {personnels, ships, errors: req.session.errors});
     req.session.errors = [];
 });
 
@@ -82,7 +88,7 @@ app.get("/edit-personnel/:id", async function(req, res) {
         res.redirect("/create-personnel");
     }
 
-    return res.render("create_personnel.ejs", {errors: [], id: id, personnel: currentPersonnel, action_type: "edit"});
+    return res.render("create_personnel.ejs", {errors: [], id, personnel: currentPersonnel, action_type: "edit"});
 });
 
 app.post("/personnel/:id", async function(req, res) {
@@ -99,7 +105,7 @@ app.post("/personnel/:id", async function(req, res) {
     personnel.validatePersonnel(currentPersonnel, errors);
 
     if(errors.length > 0) {
-        return res.render("create_personnel.ejs", {errors, id: id, personnel: currentPersonnel, action_type: "edit"});
+        return res.render("create_personnel.ejs", {errors, id, personnel: currentPersonnel, action_type: "edit"});
     }
 
     await Personnel.findOneAndUpdate(
@@ -178,7 +184,7 @@ app.get("/ship", async function(req, res) {
         }
     }
 
-    res.render("ship.ejs", {ships: ships, missions: missions, errors: req.session.errors});
+    res.render("ship.ejs", {ships, missions, errors: req.session.errors});
 
     req.session.errors = [];
 });
@@ -216,7 +222,7 @@ app.get("/edit-ship/:id", async function(req, res) {
         res.redirect("/create-ship");
     }
 
-    return res.render("create_ship.ejs", {errors: [], id: id, ship: currentShip, action_type: "edit"});
+    return res.render("create_ship.ejs", {errors: [], id, ship: currentShip, action_type: "edit"});
 });
 
 app.post("/ship/:id", async function(req, res) {
@@ -233,7 +239,7 @@ app.post("/ship/:id", async function(req, res) {
     ship.validateShip(currentShip, errors);
 
     if(errors.length > 0) {
-        return res.render("create_ship.ejs", {errors, id: id, ship: currentShip, action_type: "edit"});
+        return res.render("create_ship.ejs", {errors, id, ship: currentShip, action_type: "edit"});
     }
 
     await Ship.findOneAndUpdate(
@@ -271,7 +277,6 @@ app.post("/delete-ship/:id", async function(req, res) {
 
 app.get("/mission", async function(req, res) {
     const ships = await Ship.find();
-
     const missions = await Mission.aggregate()
     .lookup({
         from: 'shipmissionassignments',
@@ -280,11 +285,15 @@ app.get("/mission", async function(req, res) {
         as: 'assignments'
     });
 
+    const assigned_ship_ids = [];
     for (let mission of missions) {
-        mission.assigned_ship_id = mission.assignments[0]?.ship_id.toString();
+        if (mission.assignments[0]) {
+            mission.assigned_ship_id = mission.assignments[0]?.ship_id.toString();
+            assigned_ship_ids.push(mission.assigned_ship_id);
+        }
     }
 
-    res.render("mission.ejs", {missions: missions, ships: ships, errors: req.session.errors});
+    res.render("mission.ejs", {missions, ships, assigned_ship_ids, errors: req.session.errors});
     req.session.errors = [];
 });
 
@@ -321,7 +330,7 @@ app.get("/edit-mission/:id", async function(req, res) {
         res.redirect("/create-mission");
     }
 
-    return res.render("create_mission.ejs", {errors: [], id: id, mission: currentMission, action_type: "edit"});
+    return res.render("create_mission.ejs", {errors: [], id, mission: currentMission, action_type: "edit"});
 });
 
 app.post("/mission/:id", async function(req, res) {
@@ -338,7 +347,7 @@ app.post("/mission/:id", async function(req, res) {
     mission.validateMission(currentMission, errors);
 
     if(errors.length > 0) {
-        return res.render("create_mission.ejs", {errors, id: id, mission: currentMission, action_type: "edit"});
+        return res.render("create_mission.ejs", {errors, id, mission: currentMission, action_type: "edit"});
     }
 
     await Mission.findOneAndUpdate(
