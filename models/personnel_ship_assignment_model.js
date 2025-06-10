@@ -2,19 +2,19 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
     {
-        name: {
+        personnel_id: {
             type: String,
             required: true
         },
-        registry_number: {
+        ship_id: {
             type: String,
             required: true
         }
     }
 );
 
-const Ship = mongoose.model('Ship', schema);
+const PersonnelShipAssignment = mongoose.model('PersonnelShipAssignment', schema);
 
 module.exports = {
-    Ship
+    PersonnelShipAssignment
 }

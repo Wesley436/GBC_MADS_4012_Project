@@ -6,34 +6,31 @@ const schema = new mongoose.Schema(
             type: String,
             required: true
         },
-        rank: {
+        registry_number: {
             type: String,
             required: true
-        },
-        skills: {
-            type: [String]
         }
     }
 );
 
 /** 
  *  Validates whether necessary fields are empty and add errors to an array if not
- *  @param {Object} personnel - The personnel object to be validated
+ *  @param {Object} ship - The ship object to be validated
  *  @param {List<String>} errors - A list storing validation errors (if any)
  */
-function validatePersonnel(personnel, errors) {
-    if(personnel.title === "") {
+function validateShip(ship, errors) {
+    if(ship.name === "") {
         errors.push("You must enter a name");
     }
 
-    if(personnel.rank === "") {
-        errors.push("You must select a rank");
+    if(ship.registry_number === "") {
+        errors.push("You must enter a registry number");
     }
 }
 
-const Personnel = mongoose.model('Personnel', schema);
+const Ship = mongoose.model('Ship', schema);
 
 module.exports = {
-    Personnel,
-    validatePersonnel
+    Ship,
+    validateShip
 }

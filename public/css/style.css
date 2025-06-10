@@ -68,36 +68,6 @@ img {
     text-decoration: underline;
 }
 
-#subscription-models {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 0rem 2rem;
-}
-
-.subscription-model {
-    flex: 1;
-    padding: 15px;
-    margin: 5px;
-    min-width: 300px;
-    font-size: 2rem;
-    text-align: center;
-    border: solid 0.5px gray;
-    border-radius: 5px;
-    background-color: rgb(194, 194, 194);
-    display: flex;
-    flex-direction: column;
-}
-
-.subscription-model p {
-    margin: 1rem 0rem;
-}
-
-.subscription-model button {
-    padding: 1rem;
-    font-size: 2rem;margin-top: auto;
-}
-
 .main-section a:hover {
     color: rgb(0, 146, 214);
 }
@@ -136,6 +106,18 @@ footer {
     text-align: center;
 }
 
+.assignment-dropdown {
+    display: flex;
+}
+
+.assign-to-dropdown {
+    padding: 0.2rem 0.5rem;
+}
+
+.add_button {
+    padding: 0.3rem
+}
+
 .item-list {
     display: flex;
     flex-wrap: wrap;
@@ -150,12 +132,12 @@ footer {
     border: solid 1px rgb(173, 173, 173);
     padding: 1rem;
     margin: 1rem 0rem;
-    text-align: center;
+    text-align: left;
     transition: 0.3s ease, box-shadow 0.2s ease;
     display: flex;
     flex-basis: content;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
 }
 
 .item-box:hover {
@@ -238,18 +220,15 @@ footer {
     justify-content: space-between;
 }
 
-.media_button {
+.remove_button {
     min-width: 100px;
     padding: 0.2rem;
     font-weight: bold;
+    width: 10%;
+    background-color: rgb(175, 92, 92);
 }
 
 #edit_button {
     width: 15%;
     background-color: rgb(0, 129, 189);
-}
-
-#delete_button {
-    width: 10%;
-    background-color: rgb(175, 92, 92);
 }

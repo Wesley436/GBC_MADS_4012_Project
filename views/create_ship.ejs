@@ -4,17 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Ship</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <%- include("partials/header.ejs") %>
 
     <main class="main-section">
         <section class="introduction">
+            <h2><%=action_type === "create" ? "Create" : "Edit"%> Ship</h2>
         </section>
+        <form id="ship_form" class="item_form" method="POST" action=<%=action_type === 'create' ? '/ship' : '/ship/' + id%>>
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" class="text_input" value="<%=ship.name%>"><br>
+
+            <label for="registry_number">Registry Number:</label><br>
+            <input type="text" id="registry_number" name="registry_number" class="text_input" value="<%=ship.registry_number%>"></input><br>
+            
+            <% if(errors){ %>
+                <% errors.forEach(function(error){ %>
+                    <div style="color:rgb(226, 0, 0)">
+                        <%= error %>
+                    </div>
+                <%}) %>
+            <%} %>
+            <input id="submit" type="submit" value=<%=action_type === "create" ? "Create" : "Edit"%> disabled>
+        </form>
     </main>
 
     <%- include("partials/footer.ejs") %>
-    <!-- <script src="../js/create_peronnel.js"></script> -->
+    <script src="../js/create_ship.js"></script>
 </body>
 </html>

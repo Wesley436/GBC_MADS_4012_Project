@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ship</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <main class="main-section">
+        <section class="introduction">
+            <button onclick="location.href='/create-ship'" class="add_button">Add New Ship</button>
+            <div class="item-list">
+                <% ships.forEach(function(ship) { %>
+                    <div class="item-box" onclick="location.href='/edit-ship/<%= ship._id %>'">
+                        <p>Name: <%= ship.name %></p>
+                        <p>Registry Number: <%= ship.registry_number %></p>
+                        <p>Currently assigned to: </p>
+                        <form id="unassign-mission" method="POST" action="/unassign-mission/<%= ship.assigned_mission_id %>">
+                            <button type="submit" class="remove_button">Unassign from mission</button>
+                        </form>
+                        <form id="delete-item" method="POST" action="/delete-ship/<%= ship._id %>">
+                            <button type="submit" class="remove_button">Delete</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>
