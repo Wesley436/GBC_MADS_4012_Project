@@ -11,17 +11,17 @@
 
     <main class="main-section">
         <section class="introduction">
-            <button onclick="location.href='/create-personnel'" class="add_button">Add New Personnel</button>
+            <button onclick="location.href='/personnel/create'" class="add_button">Add New Personnel</button>
             <%- include("partials/error_messages.ejs", {errors}) %>
             <div class="item-list">
                 <% personnels.forEach(function(personnel) { %>
-                    <div class="item-box" onclick="location.href='/edit-personnel/<%= personnel._id %>'">
+                    <div class="item-box" onclick="location.href='/personnel/edit/<%= personnel._id %>'">
                         <p>Name: <%= personnel.name %></p>
                         <p>Rank: <%= personnel.rank %></p>
                         <p>Skills: <%= personnel.skills %></p>
                         <div class="assignment-dropdown" onclick="stopPropagation(event)">
                             <p>Currently assigned to ship: </p>
-                            <form id="assignment-form<%= personnel._id %>" method="POST" action="/assign-personnel-to-ship">
+                            <form id="assignment-form<%= personnel._id %>" method="POST" action="/personnel/assign-personnel-to-ship">
                                 <select class="assign-to-dropdown" onchange="selectShip('<%= personnel._id %>', event)">
                                     <option value="" class="assignment-option" <%= personnel.assigned_ship_id === null ? 'selected' : ''%>>-- None --</option>
                                     <% ships.forEach(function(ship) { %>
@@ -31,7 +31,7 @@
                             </form>
                         </div>
 
-                        <form id="delete-item" method="POST" action="/delete-personnel/<%= personnel._id %>">
+                        <form id="delete-item" method="POST" action="/personnel/delete/<%= personnel._id %>">
                             <button type="submit" class="remove_button">Delete</button>
                         </form>
                     </div>

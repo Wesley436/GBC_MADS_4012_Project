@@ -11,6 +11,8 @@ const ShipMissionAssignment = ship_mission_assignment.ShipMissionAssignment;
 const mission = require("./models/mission_model.js");
 const Mission = mission.Mission;
 
+const personnel_controller = require("./controller/personnel_controller.js");
+
 require("dotenv").config();
 const db = require("./config/db.js");
 const app = express();
@@ -37,129 +39,129 @@ app.get("/", async function(req,res) {
     res.render("home.ejs", {personnels, ships, missions, personnelShipAssignment, shipMissionAssignment});
 });
 
-app.get("/personnel", async function(req, res) {
-    const ships = await Ship.find();
-    const personnels = await Personnel.aggregate()
-    .lookup({
-        from: 'personnelshipassignments',
-        localField: '_id',
-        foreignField: 'personnel_id',
-        as: 'assignments'
-    });
+// app.get("/personnel", async function(req, res) {
+//     const ships = await Ship.find();
+//     const personnels = await Personnel.aggregate()
+//     .lookup({
+//         from: 'personnelshipassignments',
+//         localField: '_id',
+//         foreignField: 'personnel_id',
+//         as: 'assignments'
+//     });
 
-    for (let personnel of personnels) {
-        personnel.assigned_ship_id = personnel.assignments[0]?.ship_id.toString();
-    }
+//     for (let personnel of personnels) {
+//         personnel.assigned_ship_id = personnel.assignments[0]?.ship_id.toString();
+//     }
 
-    res.render("personnel.ejs", {personnels, ships, errors: req.session.errors});
-    req.session.errors = [];
-});
+//     res.render("personnel.ejs", {personnels, ships, errors: req.session.errors});
+//     req.session.errors = [];
+// });
 
-app.get("/create-personnel", function(req, res) {
-    return res.render("create_personnel.ejs", {errors: [], id: null, personnel: {}, action_type: "create"});
-});
+// app.get("/create-personnel", function(req, res) {
+//     return res.render("create_personnel.ejs", {errors: [], id: null, personnel: {}, action_type: "create"});
+// });
 
-app.post("/personnel", async function(req, res) {
-    const errors = [];
-    const newPersonnel = req.body;
+// app.post("/personnel", async function(req, res) {
+//     const errors = [];
+//     const newPersonnel = req.body;
     
-    personnel.validatePersonnel(newPersonnel, errors);
+//     personnel.validatePersonnel(newPersonnel, errors);
 
-    if(errors.length > 0) {
-        return res.render("create_personnel.ejs", {errors, id: null, personnel: newPersonnel, action_type: "create"});
-    }
+//     if(errors.length > 0) {
+//         return res.render("create_personnel.ejs", {errors, id: null, personnel: newPersonnel, action_type: "create"});
+//     }
 
-    const newPersonnelModel = new Personnel(newPersonnel);
-    await newPersonnelModel.save();
+//     const newPersonnelModel = new Personnel(newPersonnel);
+//     await newPersonnelModel.save();
 
-    res.redirect("/personnel");
-});
+//     res.redirect("/personnel");
+// });
 
-app.get("/edit-personnel/:id", async function(req, res) {
-    const id = req.params.id;
+// app.get("/edit-personnel/:id", async function(req, res) {
+//     const id = req.params.id;
 
-    if (!id || id.length !== 24) {
-        res.redirect("/");
-        return;
-    }
+//     if (!id || id.length !== 24) {
+//         res.redirect("/");
+//         return;
+//     }
 
-    const currentPersonnel = await Personnel.findById(req.params.id);
-    if (!currentPersonnel) {
-        res.redirect("/create-personnel");
-    }
+//     const currentPersonnel = await Personnel.findById(req.params.id);
+//     if (!currentPersonnel) {
+//         res.redirect("/create-personnel");
+//     }
 
-    return res.render("create_personnel.ejs", {errors: [], id, personnel: currentPersonnel, action_type: "edit"});
-});
+//     return res.render("create_personnel.ejs", {errors: [], id, personnel: currentPersonnel, action_type: "edit"});
+// });
 
-app.post("/personnel/:id", async function(req, res) {
-    const id = req.params.id;
+// app.post("/personnel/:id", async function(req, res) {
+//     const id = req.params.id;
 
-    if (!id || id.length !== 24) {
-        res.redirect("/");
-        return;
-    }
+//     if (!id || id.length !== 24) {
+//         res.redirect("/");
+//         return;
+//     }
     
-    const errors = [];
-    const currentPersonnel = req.body;
+//     const errors = [];
+//     const currentPersonnel = req.body;
     
-    personnel.validatePersonnel(currentPersonnel, errors);
+//     personnel.validatePersonnel(currentPersonnel, errors);
 
-    if(errors.length > 0) {
-        return res.render("create_personnel.ejs", {errors, id, personnel: currentPersonnel, action_type: "edit"});
-    }
+//     if(errors.length > 0) {
+//         return res.render("create_personnel.ejs", {errors, id, personnel: currentPersonnel, action_type: "edit"});
+//     }
 
-    await Personnel.findOneAndUpdate(
-        {_id: id},
-        {
-            $set: {
-                name: currentPersonnel.name,
-                rank: currentPersonnel.rank,
-                skills: currentPersonnel.skills
-            }
-        },
-        {new: true, runValidators: true}
-    );
+//     await Personnel.findOneAndUpdate(
+//         {_id: id},
+//         {
+//             $set: {
+//                 name: currentPersonnel.name,
+//                 rank: currentPersonnel.rank,
+//                 skills: currentPersonnel.skills
+//             }
+//         },
+//         {new: true, runValidators: true}
+//     );
 
-    res.redirect("/personnel");
-});
+//     res.redirect("/personnel");
+// });
 
-app.post("/delete-personnel/:id", async function(req, res) {
-    const id = req.params.id;
+// app.post("/delete-personnel/:id", async function(req, res) {
+//     const id = req.params.id;
     
-    if (!id || id.length !== 24) {
-        res.redirect("/");
-        return;
-    }
+//     if (!id || id.length !== 24) {
+//         res.redirect("/");
+//         return;
+//     }
 
-    const assignments = await PersonnelShipAssignment.find({personnel_id: new ObjectId(id)});
+//     const assignments = await PersonnelShipAssignment.find({personnel_id: new ObjectId(id)});
 
-    if (assignments.length === 0) {
-        await Personnel.findOneAndDelete({_id: id});
-    } else {
-        req.session.errors = ['Please unassign personnel from ship'];
-    }
-    res.redirect("/personnel");
-});
+//     if (assignments.length === 0) {
+//         await Personnel.findOneAndDelete({_id: id});
+//     } else {
+//         req.session.errors = ['Please unassign personnel from ship'];
+//     }
+//     res.redirect("/personnel");
+// });
 
-app.post("/assign-personnel-to-ship", async function(req, res) {
-    const personnel_id = req.body.personnel_id;
-    const ship_id = req.body.ship_id;
-    if (personnel_id === null) {
-        return;
-    }
+// app.post("/assign-personnel-to-ship", async function(req, res) {
+//     const personnel_id = req.body.personnel_id;
+//     const ship_id = req.body.ship_id;
+//     if (personnel_id === null) {
+//         return;
+//     }
 
-    await PersonnelShipAssignment.findOneAndDelete({personnel_id: personnel_id});
+//     await PersonnelShipAssignment.findOneAndDelete({personnel_id: personnel_id});
 
-    if (ship_id === null || !ship_id) {
-        res.redirect("/personnel");
-        return;
-    }
+//     if (ship_id === null || !ship_id) {
+//         res.redirect("/personnel");
+//         return;
+//     }
 
-    const newModel = new PersonnelShipAssignment({personnel_id: personnel_id, ship_id: ship_id});
-    await newModel.save();
+//     const newModel = new PersonnelShipAssignment({personnel_id: personnel_id, ship_id: ship_id});
+//     await newModel.save();
 
-    res.redirect("/personnel");
-});
+//     res.redirect("/personnel");
+// });
 
 app.get("/ship", async function(req, res) {
     const missions = await Mission.find();
@@ -401,6 +403,8 @@ app.post("/delete-mission/:id", async function(req, res) {
     }
     res.redirect("/mission");
 });
+
+app.use("/personnel", personnel_controller);
 
 const PORT = 3001;
     app.listen(PORT, function() {
