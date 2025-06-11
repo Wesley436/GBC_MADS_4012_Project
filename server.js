@@ -1,4 +1,5 @@
 const express = require("express");
+
 const ObjectId = require('mongoose').Types.ObjectId;
 const personnel = require("./models/personnel_model.js");
 const Personnel = personnel.Personnel;
@@ -13,7 +14,7 @@ const Mission = mission.Mission;
 
 const personnel_controller = require("./controller/personnel_controller.js");
 const ship_controller = require("./controller/ship_controller.js");
-// const mission_controller = require("./controller/mission_controller.js");
+const mission_controller = require("./controller/mission_controller.js");
 
 require("dotenv").config();
 const db = require("./config/db.js");
@@ -170,7 +171,7 @@ app.post("/delete-mission/:id", async function(req, res) {
 
 app.use("/personnel", personnel_controller);
 app.use("/ship", ship_controller);
-// app.use("/mission", mission_controller);
+app.use("/mission", mission_controller);
 
 const PORT = 3001;
     app.listen(PORT, function() {

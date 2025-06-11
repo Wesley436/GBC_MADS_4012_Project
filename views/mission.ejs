@@ -11,17 +11,17 @@
 
     <main class="main-section">
         <section class="introduction">
-            <button onclick="location.href='/create-mission'" class="add_button">Add New Mission</button>
+            <button onclick="location.href='/mission/create'" class="add_button">Add New Mission</button>
             <%- include("partials/error_messages.ejs", {errors}) %>
             <div class="item-list">
                 <% missions.forEach(function(mission) { %>
-                    <div class="item-box" onclick="location.href='/edit-mission/<%= mission._id %>'">
+                    <div class="item-box" onclick="location.href='/mission/edit/<%= mission._id %>'">
                         <p>Destination planet: <%= mission.destination_planet %></p>
                         <p>Mission purpose: <%= mission.mission_purpose %></p>
 
                         <div class="assignment-dropdown" onclick="stopPropagation(event)">
                             <p>Currently assigned to ship: </p>
-                            <form id="assignment-form<%= mission._id %>" method="POST" action="/assign-mission-to-ship">
+                            <form id="assignment-form<%= mission._id %>" method="POST" action="/mission/assign-mission-to-ship">
                                 <select class="assign-to-dropdown" onchange="selectShip('<%= mission._id %>', event)">
                                     <option value="" class="assignment-option" <%= mission.assigned_ship_id === null ? 'selected' : ''%>>-- None --</option>
                                     <% ships.forEach(function(ship) { %>
@@ -33,7 +33,7 @@
                             </form>
                         </div>
 
-                        <form id="delete-item" method="POST" action="/delete-mission/<%= mission._id %>">
+                        <form id="delete-item" method="POST" action="/mission/delete/<%= mission._id %>">
                             <button type="submit" class="remove_button">Delete</button>
                         </form>
                     </div>
