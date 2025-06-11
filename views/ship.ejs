@@ -11,16 +11,16 @@
 
     <main class="main-section">
         <section class="introduction">
-            <button onclick="location.href='/create-ship'" class="add_button">Add New Ship</button>
+            <button onclick="location.href='/ship/create'" class="add_button">Add New Ship</button>
             <%- include("partials/error_messages.ejs", {errors}) %>
             <div class="item-list">
                 <% ships.forEach(function(ship) { %>
-                    <div class="item-box" onclick="location.href='/edit-ship/<%= ship._id %>'">
+                    <div class="item-box" onclick="location.href='/ship/edit/<%= ship._id %>'">
                         <p>Name: <%= ship.name %></p>
                         <p>Registry Number: <%= ship.registry_number %></p>
                         <p>Currently assigned to planet: <%= ship.destination_planet %></p>
 
-                        <form id="delete-item" method="POST" action="/delete-ship/<%= ship._id %>">
+                        <form id="delete-item" method="POST" action="/ship/delete/<%= ship._id %>">
                             <button type="submit" class="remove_button">Delete</button>
                         </form>
                     </div>
